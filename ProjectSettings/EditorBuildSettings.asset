@@ -4,5 +4,8 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/HybirdCLRTestScene.unity
+    guid: 3da8fe4f49b660d4d9670e7fa0df4695
   m_configObjects: {}
