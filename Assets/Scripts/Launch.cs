@@ -21,9 +21,9 @@ public class Launch : MonoBehaviour
     }
 
     // Start is called before the first frame update
-    void Start()
+    private async UniTaskVoid Start()
     {
-        StartCoroutine(InitPackage());
+        await InitPackage();
     }
 
     // Update is called once per frame
@@ -32,7 +32,7 @@ public class Launch : MonoBehaviour
         
     }
 
-    IEnumerator InitPackage()
+    private async UniTask InitPackage()
     {
         // 初始化资源系统
         YooAssets.Initialize();
@@ -85,13 +85,13 @@ public class Launch : MonoBehaviour
             initializationOperation = package.InitializeAsync(createParameters);
         }
 
-        yield return initializationOperation;
+        await UniTask.WaitUntil(() => initializationOperation.IsDone);
 
         // 如果初始化失败弹出提示界面
         if (initializationOperation.Status != EOperationStatus.Succeed)
         {
             Debug.LogWarning($"{initializationOperation.Error}"); 
-            yield break;
+            return;
         }
 
         // 资源版本信息
@@ -100,13 +100,13 @@ public class Launch : MonoBehaviour
 
         // 获取资源版本信息
         var operation = package.UpdatePackageVersionAsync(false);
-        yield return operation;
+        await UniTask.WaitUntil(() => operation.IsDone);
 
         if (operation.Status != EOperationStatus.Succeed)
         {
             //更新失败
             Debug.LogError(operation.Error);
-            yield break;
+            return;
         }
 
         //更新成功
@@ -116,7 +116,7 @@ public class Launch : MonoBehaviour
         bool savePackageVersion = true;
         // 更新资源清单
         var updatePackageManifestoperation = package.UpdatePackageManifestAsync(packageVersion, savePackageVersion);
-        yield return updatePackageManifestoperation;
+        await UniTask.WaitUntil(() => updatePackageManifestoperation.IsDone);
 
         if (updatePackageManifestoperation.Status == EOperationStatus.Succeed)
         {
@@ -129,14 +129,14 @@ public class Launch : MonoBehaviour
         }
 
         // 开始下载补丁包
-        yield return Download();
+        await Download();
 
         // 切换到主页面场景
         string location = "scene_home";
         var sceneMode = UnityEngine.SceneManagement.LoadSceneMode.Single;
         bool suspendLoad = false;
         SceneHandle handle = package.LoadSceneAsync(location, sceneMode, suspendLoad);
-        yield return handle;
+        await UniTask.WaitUntil(() => handle.IsDone);
         Debug.Log($"Scene name is {handle.SceneObject.name}");
     }
 
@@ -257,7 +257,7 @@ public class Launch : MonoBehaviour
         }
     }
 
-    IEnumerator Download()
+    private async UniTask Download()
     {
         int downloadingMaxNum = 10;
         int failedTryAgain = 3;
@@ -267,7 +267,7 @@ public class Launch : MonoBehaviour
         //没有需要下载的资源
         if (downloader.TotalDownloadCount == 0)
         {
-            yield break;
+            return;
         }
 
         //需要下载的文件总数和总大小
@@ -282,7 +282,7 @@ public class Launch : MonoBehaviour
 
         //开启下载
         downloader.BeginDownload();
-        yield return downloader;
+        await UniTask.WaitUntil(() => downloader.IsDone);
 
         //检测下载结果
         if (downloader.Status == EOperationStatus.Succeed)
