@@ -1,4 +1,4 @@
-using HybridCLR;
+ï»¿using HybridCLR;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -14,11 +14,11 @@ public class HybirdCLRLoadDll : MonoBehaviour
 
     void Start()
     {
-        // Editor»·¾³ÏÂ£¬HotUpdate.dll.bytesÒÑ¾­±»×Ô¶¯¼ÓÔØ£¬²»ÐèÒª¼ÓÔØ£¬ÖØ¸´¼ÓÔØ·´¶ø»á³öÎÊÌâ¡£
+        // EditorçŽ¯å¢ƒä¸‹ï¼ŒHotUpdate.dll.byteså·²ç»è¢«è‡ªåŠ¨åŠ è½½ï¼Œä¸éœ€è¦åŠ è½½ï¼Œé‡å¤åŠ è½½åè€Œä¼šå‡ºé—®é¢˜ã€‚
 #if !UNITY_EDITOR
         Assembly hotUpdateAss = Assembly.Load(File.ReadAllBytes($"{Application.streamingAssetsPath}/HotUpdate.dll.bytes"));
 #else
-        // EditorÏÂÎÞÐè¼ÓÔØ£¬Ö±½Ó²éÕÒ»ñµÃHotUpdate³ÌÐò¼¯
+        // Editorä¸‹æ— éœ€åŠ è½½ï¼Œç›´æŽ¥æŸ¥æ‰¾èŽ·å¾—HotUpdateç¨‹åºé›†
         Assembly hotUpdateAss = System.AppDomain.CurrentDomain.GetAssemblies().First(a => a.GetName().Name == "HotUpdate");
 #endif
 
