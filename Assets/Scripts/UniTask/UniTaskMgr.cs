@@ -75,6 +75,24 @@ public class UniTaskMgr
         _cancellationTokenSource.Dispose();
     }
 
+    public async UniTask createPlayerLoopTimingTask(Action _act, PlayerLoopTiming _timing, CancellationToken _cancellationToken = default, bool _cancelImmediately = false)
+    {
+        if (_act == null)
+            return;
+
+        try
+        {
+            await _createPlayerLoopTimingTask(_act, _timing, _cancellationToken, _cancelImmediately);
+        }
+        catch (Exception ex)
+        {
+            if (ex is OperationCanceledException)
+                return;
+
+            Debug.LogError(ex);
+        }
+    }
+
     /// <summary>
     /// 添加一个任务到FixedUpdate
     /// </summary>
@@ -84,6 +102,11 @@ public class UniTaskMgr
     public async UniTask createYieldFixedUpdateTask(Action _act, CancellationTokenSource _cancellationTokenSource)
     {
         await createPlayerLoopTimingTask(_act, PlayerLoopTiming.FixedUpdate, _cancellationTokenSource);
+    }
+
+    public async UniTask createYieldFixedUpdateTask(Action _act)
+    {
+        await createPlayerLoopTimingTask(_act, PlayerLoopTiming.FixedUpdate);
     }
 
     /// <summary>
@@ -97,6 +120,11 @@ public class UniTaskMgr
         await createPlayerLoopTimingTask(_act, PlayerLoopTiming.Update, _cancellationTokenSource);
     }
 
+    public async UniTask createYieldUpdateTask(Action _act)
+    {
+        await createPlayerLoopTimingTask(_act, PlayerLoopTiming.Update);
+    }
+
     /// <summary>
     /// 添加一个任务到LateUpdate
     /// </summary>
@@ -106,6 +134,11 @@ public class UniTaskMgr
     public async UniTask createYieldLateUpdateTask(Action _act, CancellationTokenSource _cancellationTokenSource)
     {
         await createPlayerLoopTimingTask(_act, PlayerLoopTiming.LastUpdate, _cancellationTokenSource);
+    }
+
+    public async UniTask createYieldLateUpdateTask(Action _act)
+    {
+        await createPlayerLoopTimingTask(_act, PlayerLoopTiming.LastUpdate);
     }
 
     #endregion
@@ -158,6 +191,24 @@ public class UniTaskMgr
         _cancellationTokenSource.Dispose();
     }
 
+    public async UniTask createNextPlayerLoopTimingTask(Action _act, PlayerLoopTiming _timing, CancellationToken _cancellationToken = default, bool _cancelImmediately = false)
+    {
+        if (_act == null)
+            return;
+
+        try
+        {
+            await _createNextPlayerLoopTimingTask(_act, _timing, _cancellationToken, _cancelImmediately);
+        }
+        catch (Exception ex)
+        {
+            if (ex is OperationCanceledException)
+                return;
+
+            Debug.LogError(ex);
+        }
+    }
+
     /// <summary>
     /// 添加一个任务到下一帧FixedUpdate
     /// </summary>
@@ -167,6 +218,11 @@ public class UniTaskMgr
     public async UniTask createYieldNextFixedUpdateTask(Action _act, CancellationTokenSource _cancellationTokenSource)
     {
         await createPlayerLoopTimingTask(_act, PlayerLoopTiming.FixedUpdate, _cancellationTokenSource);
+    }
+
+    public async UniTask createYieldNextFixedUpdateTask(Action _act)
+    {
+        await createPlayerLoopTimingTask(_act, PlayerLoopTiming.FixedUpdate);
     }
 
     /// <summary>
@@ -180,6 +236,11 @@ public class UniTaskMgr
         await createPlayerLoopTimingTask(_act, PlayerLoopTiming.Update, _cancellationTokenSource);
     }
 
+    public async UniTask createYieldNextUpdateTask(Action _act)
+    {
+        await createPlayerLoopTimingTask(_act, PlayerLoopTiming.Update);
+    }
+
     /// <summary>
     /// 添加一个任务到下一帧LateUpdate
     /// </summary>
@@ -191,6 +252,10 @@ public class UniTaskMgr
         await createPlayerLoopTimingTask(_act, PlayerLoopTiming.LastUpdate, _cancellationTokenSource);
     }
 
+    public async UniTask createYieldNextLateUpdateTask(Action _act)
+    {
+        await createPlayerLoopTimingTask(_act, PlayerLoopTiming.LastUpdate);
+    }
     #endregion
 
 
