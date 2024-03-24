@@ -38,19 +38,23 @@ public class Launch : MonoBehaviour
         YooAssets.Initialize();
 
         string packageName = "DefaultPackage";
-        // 创建默认的资源包
+        // 创建默认的资源包（原生文件）
         var package = YooAssets.CreatePackage(packageName);
+        // 创建默认的资源包（资源文件）
+        var resourcesPackage = YooAssets.CreatePackage("ResourcesPackage");
 
         // 设置该资源包为默认的资源包，可以使用YooAssets相关加载接口加载该资源包内容。
         YooAssets.SetDefaultPackage(package);
 
         // 编辑器下的模拟模式
         InitializationOperation initializationOperation = null;
+        InitializationOperation initializationResOperation = null;
         if (playMode == EPlayMode.EditorSimulateMode)
         {
             var createParameters = new EditorSimulateModeParameters();
             createParameters.SimulateManifestFilePath = EditorSimulateModeHelper.SimulateBuild(EDefaultBuildPipeline.BuiltinBuildPipeline, packageName);
             initializationOperation = package.InitializeAsync(createParameters);
+            initializationResOperation = resourcesPackage.InitializeAsync(createParameters);
         }
 
         // 单机运行模式
@@ -59,6 +63,7 @@ public class Launch : MonoBehaviour
             var createParameters = new OfflinePlayModeParameters();
             createParameters.DecryptionServices = new FileStreamDecryption();
             initializationOperation = package.InitializeAsync(createParameters);
+            initializationResOperation = resourcesPackage.InitializeAsync(createParameters);
         }
 
         // 联机运行模式
@@ -71,6 +76,7 @@ public class Launch : MonoBehaviour
             createParameters.BuildinQueryServices = new GameQueryServices();
             createParameters.RemoteServices = new RemoteServices(defaultHostServer, fallbackHostServer);
             initializationOperation = package.InitializeAsync(createParameters);
+            initializationResOperation = resourcesPackage.InitializeAsync(createParameters);
         }
 
         // WebGL运行模式
@@ -83,9 +89,10 @@ public class Launch : MonoBehaviour
             createParameters.BuildinQueryServices = new GameQueryServices();
             createParameters.RemoteServices = new RemoteServices(defaultHostServer, fallbackHostServer);
             initializationOperation = package.InitializeAsync(createParameters);
+            initializationResOperation = resourcesPackage.InitializeAsync(createParameters);
         }
 
-        await UniTask.WaitUntil(() => initializationOperation.IsDone);
+        await UniTask.WaitUntil(() => initializationOperation.IsDone && initializationResOperation.IsDone);
 
         // 如果初始化失败弹出提示界面
         if (initializationOperation.Status != EOperationStatus.Succeed)
@@ -132,12 +139,14 @@ public class Launch : MonoBehaviour
         await Download();
 
         // 切换到主页面场景
-        string location = "scene_home";
-        var sceneMode = UnityEngine.SceneManagement.LoadSceneMode.Single;
-        bool suspendLoad = false;
-        SceneHandle handle = package.LoadSceneAsync(location, sceneMode, suspendLoad);
-        await UniTask.WaitUntil(() => handle.IsDone);
-        Debug.Log($"Scene name is {handle.SceneObject.name}");
+        //string location = "scene_home";
+        //var sceneMode = UnityEngine.SceneManagement.LoadSceneMode.Single;
+        //bool suspendLoad = false;
+        //SceneHandle handle = package.LoadSceneAsync(location, sceneMode, suspendLoad);
+        //await UniTask.WaitUntil(() => handle.IsDone);
+        //Debug.Log($"Scene name is {handle.SceneObject.name}");
+
+        HybirdCLRMgr.Instance.Start();
     }
 
     /// <summary>
